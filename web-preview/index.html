@@ -1,0 +1,21 @@
+<title>MyAir preview</title>
+<style>
+  :root{ --notice-bg:#2a2113; --notice-fg:#e6cfa5; --notice-line:#6b4a2a; }
+  body{ margin:0; }
+  .sandboxNotice{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+    background:var(--notice-bg); color:var(--notice-fg);
+    font:12px/1.5 'Space Mono', monospace;
+    padding-block:8px; padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    border-bottom:1px solid var(--notice-line);
+  }
+</style>
+<div class="sandboxNotice">
+  Browser preview of the real MyAir source (not the Android app). Google Home, native Qubo calls and the IR blaster are unavailable here by design — each provider correctly reports an "unsupported platform" state instead of pretending to reach real hardware. Icons are simplified placeholder glyphs in this zero-build preview only; all data, controls and provider logic are the unmodified project source.
+</div>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="typescript.js"></script>
+<script src="loader.js"></script>

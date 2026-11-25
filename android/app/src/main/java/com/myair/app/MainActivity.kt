@@ -1,0 +1,82 @@
+package com.myair.app
+
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.os.Bundle
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.webkit.WebViewAssetLoader
+import com.myair.app.bridge.NativeBridge
+import com.myair.app.bridge.toJson
+import com.myair.app.ir.IrRemoteController
+import kotlinx.coroutines.launch
+
+/** Hosts the existing MyAir web dashboard (built from ../dist into assets) and the Home APIs bridge. */
+class MainActivity : ComponentActivity() {
+    private lateinit var webView: WebView
+    private lateinit var bridge: NativeBridge
+
+    @SuppressLint("SetJavaScriptEnabled")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val app = application as MyAirApp
+        val googleHome = app.googleHomeProvider
+        val qubo = app.quboProvider
+
+        // Must happen in onCreate: lets the Home APIs launch Google's permission UI.
+        googleHome.bindActivity(this)
+        qubo.bindActivity(this) // no-op for Qubo (cloud-account sign-in, no system permission UI)
+
+        webView = WebView(this).apply { setBackgroundColor(Color.parseColor("#071426")) }
+        setContentView(webView)
+
+        val assets = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+        webView.settings.apply {
+            javaScriptEnabled = true
+            allowFileAccess = false
+            allowContentAccess = false
+        }
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
+                assets.shouldInterceptRequest(request.url)
+
+            // The JS bridge is only reachable from our own bundled origin: block all other navigation.
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
+                request.url.host != WebViewAssetLoader.DEFAULT_DOMAIN
+        }
+        bridge = NativeBridge(googleHome, qubo, IrRemoteController(this), webView, lifecycleScope)
+        webView.addJavascriptInterface(bridge, "MyAirNative")
+        webView.loadUrl("https://${WebViewAssetLoader.DEFAULT_DOMAIN}/assets/index.html")
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.canGoBack()) webView.goBack() else { isEnabled = false; onBackPressedDispatcher.onBackPressed() }
+            }
+        })
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Permissions/session must be re-checked on every app start (they can be revoked).
+                launch { googleHome.refresh() }
+                launch { qubo.refresh() }
+                launch { googleHome.snapshot.collect { bridge.pushSnapshot(it.toJson()) } }
+                launch { qubo.snapshot.collect { bridge.pushQuboSnapshot(it.toJson()) } }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        webView.removeJavascriptInterface("MyAirNative")
+        webView.destroy()
+        super.onDestroy()
+    }
+}

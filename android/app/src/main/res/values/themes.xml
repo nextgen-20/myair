@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.MyAir" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#071426</item>
+        <item name="android:statusBarColor">#071426</item>
+        <item name="android:navigationBarColor">#071426</item>
+    </style>
+</resources>
