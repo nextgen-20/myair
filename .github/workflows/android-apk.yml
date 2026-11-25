@@ -30,8 +30,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Install required Android SDK packages
+        # ubuntu-latest runners ship a preinstalled Android SDK (ANDROID_HOME) already,
+        # so no third-party setup action is used here. We only need to make sure the
+        # specific platform/build-tools this project targets (compileSdk/targetSdk 36,
+        # see android/app/build.gradle.kts) and the command-line tools are present, and
+        # accept the SDK licenses non-interactively.
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" \
+            "platforms;android-36" \
+            "build-tools;36.0.0"
 
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
