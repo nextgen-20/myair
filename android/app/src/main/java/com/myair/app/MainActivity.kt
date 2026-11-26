@@ -11,6 +11,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Lifecycle
@@ -50,6 +51,10 @@ class MainActivity : ComponentActivity() {
             .build()
         webView.settings.apply {
             javaScriptEnabled = true
+            // React uses localStorage for theme/session state. Android WebView does not
+            // guarantee DOM storage is enabled by default, so enable it explicitly.
+            domStorageEnabled = true
+            databaseEnabled = true
             allowFileAccess = false
             allowContentAccess = false
         }
@@ -88,6 +93,18 @@ class MainActivity : ComponentActivity() {
                 launch { qubo.snapshot.collect { bridge.pushQuboSnapshot(it.toJson()) } }
             }
         }
+    }
+
+    private fun showStartupError(message: String) {
+        val errorView = TextView(this).apply {
+            setTextColor(Color.WHITE)
+            setBackgroundColor(Color.parseColor("#071426"))
+            textSize = 15f
+            gravity = android.view.Gravity.CENTER
+            setPadding(40, 40, 40, 40)
+            text = "MyAir\\n\\n$message"
+        }
+        setContentView(errorView)
     }
 
     override fun onDestroy() {
