@@ -10,6 +10,7 @@ import { AddRemote } from './pages/AddRemote';
 import { AddQubo } from './pages/AddQubo';
 import { PhaseBanner } from './components/PhaseBanner';
 import { Controls } from './components/Controls';
+import { QuboPanel } from './components/QuboPanel';
 import { connectivityLabel } from './providers/format';
 import { QUBO_PROVENANCE } from './providers/qubo/status';
 import { useQuboProvider } from './providers/qubo/useQuboProvider';
@@ -51,16 +52,18 @@ function App() {
             <button className="primary" onClick={add}><Plus size={17} /> Add device</button>
           </div>
         </header>
-        {page === 'Dashboard' && <Dashboard tagged={tagged} google={google.snapshot} qubo={qubo.snapshot} googleProvider={google.provider} add={add} />}
-        {page === 'Devices' && <Devices tagged={tagged} add={add} />}
-        {page === 'Integrations' && <Integrations google={google.snapshot} qubo={qubo.snapshot} setPage={setPage} />}
-        {page === 'Setup' && <Setup snapshot={google.snapshot} provider={google.provider} />}
-        {page === 'Add Qubo' && <AddQubo snapshot={qubo.snapshot} provider={qubo.provider} />}
-        {page === 'Integration status' && <IntegrationStatus snapshot={google.snapshot} provider={google.provider} secondSnapshot={qubo.snapshot} secondProvider={qubo.provider} />}
-        {page === 'Add Remote' && <AddRemote />}
-        {page === 'Automations' && <Automations tagged={tagged} />}
-        {page === 'History' && <History />}
-        {page === 'Settings' && <SettingsPage />}
+        <div className="pageFade" key={page}>
+          {page === 'Dashboard' && <Dashboard tagged={tagged} google={google.snapshot} qubo={qubo.snapshot} googleProvider={google.provider} add={add} />}
+          {page === 'Devices' && <Devices tagged={tagged} add={add} />}
+          {page === 'Integrations' && <Integrations google={google.snapshot} qubo={qubo.snapshot} setPage={setPage} />}
+          {page === 'Setup' && <Setup snapshot={google.snapshot} provider={google.provider} />}
+          {page === 'Add Qubo' && <AddQubo snapshot={qubo.snapshot} provider={qubo.provider} />}
+          {page === 'Integration status' && <IntegrationStatus snapshot={google.snapshot} provider={google.provider} secondSnapshot={qubo.snapshot} secondProvider={qubo.provider} />}
+          {page === 'Add Remote' && <AddRemote />}
+          {page === 'Automations' && <Automations tagged={tagged} />}
+          {page === 'History' && <History />}
+          {page === 'Settings' && <SettingsPage />}
+        </div>
       </main>
     </div>
   );
@@ -86,29 +89,34 @@ function Dashboard({ tagged, google, qubo, googleProvider, add }: {
   }
   const d = t.device;
   const online = d.connectivity === 'online' || d.connectivity === 'partially_online';
+  const isQubo = t.sourceLabel === 'Qubo';
   return (
     <section>
       <PhaseBanner snapshot={google} provider={googleProvider} />
-      <div className="heroGrid">
-        <div className="card air">
-          <div className="cardTop">
-            <div><span className="label">{d.room ?? t.sourceLabel}{d.model ? ` · ${d.model}` : ''}</span><h2>{d.name}</h2></div>
-            <span className={'status ' + (online ? '' : 'bad')}><i /> {connectivityLabel(d.connectivity)}</span>
-          </div>
-          <div className="gauge" style={d.state.fanPercent != null ? ({ background: `conic-gradient(var(--cyan) 0 ${d.state.fanPercent}%,#153550 ${d.state.fanPercent}% 100%)` }) : undefined}>
-            <div>
-              <strong>{d.state.fanPercent ?? d.state.fanSpeedLevel ?? '—'}</strong>
-              <span>{d.state.fanPercent != null ? '% FAN SPEED' : d.state.fanSpeedLevel != null ? 'FAN SPEED LEVEL' : 'FAN SPEED NOT EXPOSED'}</span>
+      {isQubo ? (
+        <QuboPanel device={d} provider={t.provider} />
+      ) : (
+        <div className="heroGrid">
+          <div className="card air">
+            <div className="cardTop">
+              <div><span className="label">{d.room ?? t.sourceLabel}{d.model ? ` · ${d.model}` : ''}</span><h2>{d.name}</h2></div>
+              <span className={'status ' + (online ? '' : 'bad')}><i /> {connectivityLabel(d.connectivity)}</span>
+            </div>
+            <div className="gauge" style={d.state.fanPercent != null ? ({ background: `conic-gradient(var(--cyan) 0 ${d.state.fanPercent}%,#153550 ${d.state.fanPercent}% 100%)` }) : undefined}>
+              <div>
+                <strong>{d.state.fanPercent ?? d.state.fanSpeedLevel ?? '—'}</strong>
+                <span>{d.state.fanPercent != null ? '% FAN SPEED' : d.state.fanSpeedLevel != null ? 'FAN SPEED LEVEL' : 'FAN SPEED NOT EXPOSED'}</span>
+              </div>
+            </div>
+            <div className="quality">
+              {d.state.power === true ? 'Running' : d.state.power === false ? 'Off' : 'Power state not reported'}
+              {' · '}{d.state.pm25 != null ? `PM2.5 ${d.state.pm25} µg/m³` : 'PM2.5 not exposed by this device'}
+              {d.state.filterLifePercent != null && ` · Filter ${d.state.filterLifePercent}%`}
             </div>
           </div>
-          <div className="quality">
-            {d.state.power === true ? 'Running' : d.state.power === false ? 'Off' : 'Power state not reported'}
-            {' · '}{d.state.pm25 != null ? `PM2.5 ${d.state.pm25} µg/m³` : 'PM2.5 not exposed by this device'}
-            {d.state.filterLifePercent != null && ` · Filter ${d.state.filterLifePercent}%`}
-          </div>
+          <Controls device={d} provider={t.provider} />
         </div>
-        <Controls device={d} provider={t.provider} />
-      </div>
+      )}
       <div className="card brain">
         <div className="brainIcon"><Gauge size={20} /></div>
         <div>

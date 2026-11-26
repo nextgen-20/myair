@@ -38,11 +38,16 @@ val syncWebAssets by tasks.registering(Copy::class) {
 tasks.named("preBuild") { dependsOn(syncWebAssets) }
 
 dependencies {
-    // --- Google Home Home APIs (both artifacts are required) ---
-    implementation("com.google.android.gms:play-services-home:$homeApisVersion")
-    implementation("com.google.android.gms:play-services-home-types:$homeApisVersion")
+    // --- Google Home Home APIs: set aside (see docs/GOOGLE_HOME_SDK_SETUP.md and
+    // docs/google-home-disabled/README.md) because these two artifacts are not published on
+    // dl.google.com or Maven Central at any version - only distributed to developers signed in
+    // to the Home APIs public beta, for local Maven installation. Uncomment once you've done
+    // that AND moved GoogleHomePurifierProvider.kt back into src/main (see the README above).
+    // implementation("com.google.android.gms:play-services-home:$homeApisVersion")
+    // implementation("com.google.android.gms:play-services-home-types:$homeApisVersion")
 
-    // Home APIs 1.11+ require kotlinx.coroutines to be declared by the app.
+    // Home APIs 1.11+ require kotlinx.coroutines to be declared by the app; QuboProvider also
+    // uses coroutines directly, so this stays regardless of the Google Home dependency above.
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 

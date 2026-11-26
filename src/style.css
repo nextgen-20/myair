@@ -28,3 +28,75 @@
 .device.clickable{cursor:pointer;border-color:var(--line);transition:border-color .15s}
 .device.clickable:hover{border-color:#3d7797}
 .device.clickable.sel{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset}
+
+/* --- Page transitions + global touch feedback --- */
+.pageFade{animation:pageFadeIn .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes pageFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+button{transition:transform .12s ease,filter .12s ease,background-color .15s ease,border-color .15s ease}
+button:active:not(:disabled){transform:scale(.96)}
+
+/* --- Qubo premium panel --- */
+.qpanel{position:relative;overflow:hidden;border-radius:22px;padding:30px 26px 26px;
+  background:radial-gradient(120% 140% at 15% -10%,#13263a 0%,#0a1726 46%,#060e18 100%);
+  border:1px solid #16293f;box-shadow:0 30px 70px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04);
+  isolation:isolate}
+.qpanelGlow{position:absolute;inset:-40%;z-index:0;pointer-events:none;
+  background:radial-gradient(38% 38% at 24% 18%,var(--qglow,rgba(79,227,154,.22)) 0%,transparent 70%),
+             radial-gradient(32% 32% at 82% 78%,var(--qglow,rgba(79,227,154,.14)) 0%,transparent 70%);
+  animation:qDrift 9s ease-in-out infinite alternate;filter:blur(2px)}
+.qpanel.band-good{--qglow:rgba(79,227,154,.26)}.qpanel.band-moderate{--qglow:rgba(240,194,80,.24)}.qpanel.band-poor{--qglow:rgba(242,106,85,.24)}.qpanel.band-unknown{--qglow:rgba(120,145,168,.16)}
+@keyframes qDrift{from{transform:translate(0,0) scale(1)}to{transform:translate(2%,-3%) scale(1.05)}}
+.qpanelTop{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.qEyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.6px;color:#6f93ac}
+.qName{margin:6px 0 0;font-size:21px;color:#f1f8ff}
+.qConn{font-size:11px;display:inline-flex;align-items:center;gap:7px;color:#8dc7a8;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.qConn i{width:6px;height:6px;border-radius:50%;background:#62d88d;box-shadow:0 0 9px #62d88d}
+.qConn.off{color:#e09a8a}.qConn.off i{background:#e0705a;box-shadow:0 0 9px #e0705a}
+
+.qRingWrap{position:relative;z-index:1;width:220px;height:220px;margin:18px auto 6px}
+.qRing{width:100%;height:100%;transform:rotate(-90deg)}
+.qRingTrack{fill:none;stroke:rgba(255,255,255,.06);stroke-width:12}
+.qRingValue{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .85s cubic-bezier(.22,1,.36,1),stroke .4s ease}
+.qRingCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.qRingCenter strong{font-size:52px;font-weight:700;line-height:1;color:#f6fbff;letter-spacing:-1px}
+.qUnit{font-family:'Space Mono',monospace;font-size:10px;color:#7f9cb2;letter-spacing:.5px}
+.qBandPill{margin-top:4px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:20px;border:1px solid currentColor;transition:color .4s ease,border-color .4s ease}
+.qBandPill.band-good{color:#4fe39a}.qBandPill.band-moderate{color:#f0c250}.qBandPill.band-poor{color:#f26a55}.qBandPill.band-unknown{color:#7f9cb2}
+
+.qPowerRow{position:relative;z-index:1;display:flex;align-items:center;gap:16px;margin:22px 4px 20px}
+.qPowerBtn{width:60px;height:60px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+  background:#101e2d;color:#5f7f94;border:1px solid #1d3246;box-shadow:inset 0 2px 4px rgba(0,0,0,.4);transition:all .25s ease}
+.qPowerBtn.on{background:radial-gradient(circle at 35% 30%,#2ef0a0,#1aa868 70%);color:#06140d;box-shadow:0 0 0 4px rgba(46,240,160,.12),0 0 24px rgba(46,240,160,.45)}
+.qPowerBtn.pressed{transform:scale(.9)}
+.qPowerBtn:disabled{opacity:.4;cursor:not-allowed}
+.qPowerLabel{display:flex;flex-direction:column;gap:3px}
+.qPowerState{font-size:15px;color:#e7f4fb;font-weight:600}
+.qFilter{font-size:11px;color:#7f9cb2;font-family:'Space Mono',monospace}
+
+.qSeg{position:relative;z-index:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:0;
+  background:#0c1c2b;border:1px solid #17293b;border-radius:13px;padding:4px;margin:0 2px 16px}
+.qSegThumb{position:absolute;top:4px;bottom:4px;left:4px;border-radius:9px;background:linear-gradient(145deg,#1d4a66,#163a52);
+  box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .28s cubic-bezier(.22,1,.36,1),width .28s;width:calc((100% - 8px) / var(--n,3))}
+.qSegBtn{position:relative;z-index:1;padding:10px 6px;border-radius:9px;background:transparent;color:#7f9cb2;font-size:13px;font-weight:600;text-align:center}
+.qSegBtn.sel{color:#eaf6ff}
+.qSegBtn:disabled{cursor:not-allowed;opacity:.55}
+.qSegSmall{padding:3px;margin:0}.qSegSmall .qSegBtn{padding:7px 4px;font-size:12px}
+
+.qSpeedRow{position:relative;z-index:1;margin-bottom:18px}
+.qSpeedLabel{display:flex;align-items:center;gap:6px;font-size:11px;color:#7f9cb2;margin-bottom:8px;font-family:'Space Mono',monospace;letter-spacing:.5px}
+
+.qBottomBar{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  border-top:1px solid #16293b;padding-top:18px;margin-top:4px}
+.qBarBtn{display:flex;flex-direction:column;align-items:center;gap:7px;padding:13px 6px;border-radius:12px;
+  background:#0d1d2c;border:1px solid #182b3e;color:#9db8cc;font-size:11px}
+.qBarBtn:hover:not(:disabled){border-color:#2c4f6b;background:#102234}
+.qBarBtn.disabled{color:#5e7488;opacity:.6}
+.qBarBtn.active{color:#4fe39a;border-color:#275c43;background:#0f2a1f;box-shadow:0 0 16px rgba(79,227,154,.18)}
+.qBarBtn:disabled{cursor:not-allowed}
+
+.qToastWrap{position:relative;z-index:1;margin-top:16px}
+.qToast{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:10px;background:#0d2943;color:#b9d5e7;
+  animation:qToastIn .22s ease both}
+.qToast.ok{background:#0f2f25;color:#8dd9b0}.qToast.warn{background:#2a2113;color:#e6cfa5}.qToast.err{background:#33171a;color:#f0a9a9}.qToast.info{background:#0d2131;color:#9fc3db}
+@keyframes qToastIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.qpanel{padding:22px 16px 20px;border-radius:18px}.qRingWrap{width:190px;height:190px}.qRingCenter strong{font-size:44px}.qBottomBar{gap:7px}.qBarBtn{padding:11px 4px;font-size:10px}}
