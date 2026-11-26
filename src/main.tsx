@@ -78,13 +78,28 @@ function Dashboard({ tagged, google, qubo, googleProvider, add }: {
   const t = supported[0];
   if (!t) {
     return (
-      <section>
-        <PhaseBanner snapshot={google} provider={googleProvider} />
-        <div className="empty">
-          <div className="emptyIcon"><AirVent size={28} /></div>
-          <h2>No purifier connected</h2>
-          <p>Connect a real device through Google Home or your Qubo account. MyAir does not fabricate sensor readings or pretend commands were sent.</p>
-          <button className="primary" onClick={add}><Plus size={17} /> Connect a device</button>
+      <section className="welcomePage">
+        <div className="welcomeGlow" />
+        <div className="welcomeContent">
+          <img className="welcomeLogo" src="/myair-logo.svg" alt="" />
+          <span className="welcomeKicker">SMART AIR · SIMPLIFIED</span>
+          <h2>Welcome to MyAir</h2>
+          <p className="welcomeLead">Monitor and control your air purifier from one simple place.</p>
+          <button className="welcomeAdd" onClick={add}><Plus size={19} /> Add Purifier</button>
+          <div className="welcomeDivider"><span>CONNECT WITH</span></div>
+          <div className="welcomeConnections">
+            <button className="connectionCard" onClick={() => {}} disabled>
+              <div className="connectionIcon qubo"><Wind size={20} /></div>
+              <div><strong>Qubo</strong><span>Sign in & discover your configured purifier</span></div>
+              <ChevronRight size={17} />
+            </button>
+            <button className="connectionCard" onClick={() => setPage('Integrations')}>
+              <div className="connectionIcon home"><Home size={20} /></div>
+              <div><strong>Google Home</strong><span>Connect through Integrations</span></div>
+              <ChevronRight size={17} />
+            </button>
+          </div>
+          <p className="welcomeNote">Already configured your purifier in Qubo?<br />Sign in to the same Qubo account and MyAir will find it.</p>
         </div>
       </section>
     );
