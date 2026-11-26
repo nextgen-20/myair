@@ -29,7 +29,7 @@ function App() {
   const google = useProvider();
   const qubo = useQuboProvider();
   const [page, setPage] = useState('Dashboard');
-  const add = () => setPage('Integrations');
+  const add = () => setPage('Add Qubo');
 
   const tagged: TaggedDevice[] = [
     ...google.snapshot.devices.map((device) => ({ device, provider: google.provider, sourceLabel: 'Google Home' })),
@@ -88,7 +88,7 @@ function Dashboard({ tagged, google, qubo, googleProvider, add }: {
           <button className="welcomeAdd" onClick={add}><Plus size={19} /> Add Purifier</button>
           <div className="welcomeDivider"><span>CONNECT WITH</span></div>
           <div className="welcomeConnections">
-            <button className="connectionCard" onClick={() => {}} disabled>
+            <button className="connectionCard" onClick={() => setPage('Add Qubo')}>
               <div className="connectionIcon qubo"><Wind size={20} /></div>
               <div><strong>Qubo</strong><span>Sign in & discover your configured purifier</span></div>
               <ChevronRight size={17} />
