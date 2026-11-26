@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AirVent, Activity, Workflow, Cloud, Home, Plus, Settings, ShieldCheck, Wind, Gauge, ChevronRight, ListChecks, Radio } from 'lucide-react';
 import './style.css';
@@ -29,6 +29,8 @@ function App() {
   const google = useProvider();
   const qubo = useQuboProvider();
   const [page, setPage] = useState('Dashboard');
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('myair-theme') !== 'light');
+  useEffect(() => { document.documentElement.dataset.theme = darkMode ? 'dark' : 'light'; localStorage.setItem('myair-theme', darkMode ? 'dark' : 'light'); }, [darkMode]);
   const add = () => setPage('Add Qubo');
 
   const tagged: TaggedDevice[] = [
@@ -49,7 +51,7 @@ function App() {
         <header>
           <div><div className="eyebrow">AIR INTELLIGENCE</div><h1>{page}</h1></div>
           <div className="actions">
-            <button className="ghost" onClick={() => setPage('Integration status')}>Connection status</button>
+            <button className="themeToggle" aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} onClick={() => setDarkMode(v => !v)}>{darkMode ? "☀" : "☾"} <span>{darkMode ? "Light" : "Dark"}</span></button><button className="ghost" onClick={() => setPage('Integration status')}>Connection status</button>
             <button className="primary" onClick={add}><Plus size={17} /> Add device</button>
           </div>
         </header>
@@ -82,7 +84,7 @@ function Dashboard({ tagged, google, qubo, googleProvider, add }: {
         <div className="welcomeGlow" />
         <div className="welcomeContent">
           <div className="welcomeTop">
-            <div className="welcomeBrand"><img className="welcomeLogo" src="/myair-logo.svg" alt="" /><div><strong>MyAir</strong><span>SMART AIR</span></div></div>
+            <div className="welcomeBrand"><div className="welcomeLogoWrap"><img className="welcomeLogo" src="/myair-logo.svg" alt="MyAir" /></div><div><strong>MyAir</strong><span>SMART AIR</span></div></div>
             <span className="welcomeStatus"><i /> READY</span>
           </div>
           <div className="welcomeHero">
