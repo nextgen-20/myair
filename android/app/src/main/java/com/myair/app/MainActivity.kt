@@ -40,6 +40,10 @@ class MainActivity : ComponentActivity() {
 
         webView = WebView(this).apply { setBackgroundColor(Color.parseColor("#071426")) }
         setContentView(webView)
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 42)
+        }
 
         val assets = WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
