@@ -2,6 +2,10 @@ package com.myair.app
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.Manifest
+import android.content.pm.PackageManager
+import android.webkit.GeolocationPermissions
+import android.webkit.WebChromeClient
 import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -44,6 +48,14 @@ class MainActivity : ComponentActivity() {
             javaScriptEnabled = true
             allowFileAccess = false
             allowContentAccess = false
+        }
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(origin: String, callback: GeolocationPermissions.Callback) {
+                val granted = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                callback.invoke(origin, granted, false)
+                if (!granted) requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 42)
+            }
         }
         webView.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
