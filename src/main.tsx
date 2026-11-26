@@ -81,25 +81,33 @@ function Dashboard({ tagged, google, qubo, googleProvider, add }: {
       <section className="welcomePage">
         <div className="welcomeGlow" />
         <div className="welcomeContent">
-          <img className="welcomeLogo" src="/myair-logo.svg" alt="" />
-          <span className="welcomeKicker">SMART AIR · SIMPLIFIED</span>
-          <h2>Welcome to MyAir</h2>
-          <p className="welcomeLead">Monitor and control your air purifier from one simple place.</p>
-          <button className="welcomeAdd" onClick={add}><Plus size={19} /> Add Purifier</button>
-          <div className="welcomeDivider"><span>CONNECT WITH</span></div>
+          <div className="welcomeTop">
+            <div className="welcomeBrand"><img className="welcomeLogo" src="/myair-logo.svg" alt="" /><div><strong>MyAir</strong><span>SMART AIR</span></div></div>
+            <span className="welcomeStatus"><i /> READY</span>
+          </div>
+          <div className="welcomeHero">
+            <span className="welcomeKicker">YOUR AIR. ONE PLACE.</span>
+            <h2>Cleaner air,<br /><em>made simple.</em></h2>
+            <p className="welcomeLead">Connect your purifier and see its real air quality, power and controls in one clean dashboard.</p>
+            <button className="welcomeAdd" onClick={add}><Plus size={19} /> Add Purifier</button>
+          </div>
+          <div className="welcomePreview">
+            <div className="previewRing"><div><strong>—</strong><span>PM2.5</span></div></div>
+            <div className="previewCopy"><span>LIVE AIR QUALITY</span><strong>Waiting for purifier</strong><p>No readings are shown until a real device is connected.</p></div>
+          </div>
           <div className="welcomeConnections">
             <button className="connectionCard" onClick={() => setPage('Add Qubo')}>
               <div className="connectionIcon qubo"><Wind size={20} /></div>
-              <div><strong>Qubo</strong><span>Sign in & discover your configured purifier</span></div>
+              <div><span className="connectionEyebrow">RECOMMENDED</span><strong>Connect Qubo</strong><span>Sign in to discover a purifier already configured in the Qubo app.</span></div>
               <ChevronRight size={17} />
             </button>
             <button className="connectionCard" onClick={() => setPage('Integrations')}>
               <div className="connectionIcon home"><Home size={20} /></div>
-              <div><strong>Google Home</strong><span>Connect through Integrations</span></div>
+              <div><span className="connectionEyebrow">OPTIONAL</span><strong>Google Home</strong><span>Use Google Home as another supported connection.</span></div>
               <ChevronRight size={17} />
             </button>
           </div>
-          <p className="welcomeNote">Already configured your purifier in Qubo?<br />Sign in to the same Qubo account and MyAir will find it.</p>
+          <p className="welcomeNote">First time with Qubo? Configure the purifier in the official Qubo app first, then sign in here.</p>
         </div>
       </section>
     );
