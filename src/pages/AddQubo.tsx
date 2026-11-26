@@ -48,6 +48,10 @@ export function AddQubo({ snapshot, provider }: { snapshot: ProviderSnapshot; pr
       <section>
         <PhaseBanner snapshot={snapshot} provider={provider} />
         <div className="card settings">
+          <div className="quboSetupNote">
+            <div className="quboSetupIcon"><Wind size={18} /></div>
+            <div><strong>Set up your purifier in the Qubo app first</strong><p>Complete the first-time Wi‑Fi setup there. Once the purifier is configured and linked to your Qubo account, MyAir can find it here.</p></div>
+          </div>
           <span className="label">ADD DEVICE · QUBO</span>
           <h2>Sign in with your Qubo account</h2>
           <p className="lead">MyAir sends your email and password directly to Qubo's own cloud API over TLS, the same way the official Qubo app does. MyAir never sees or stores your password — only the access/refresh tokens Qubo issues back, kept in Android's encrypted storage.</p>
