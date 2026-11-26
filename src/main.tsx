@@ -39,7 +39,7 @@ function App() {
   return (
     <div className="app">
       <aside>
-        <div className="brand"><div className="mark"><Wind size={19} /></div><span>MyAir</span></div>
+        <div className="brand"><img className="brandLogo" src="/myair-logo.svg" alt="MyAir" /><span>MyAir</span></div>
         <nav>{nav.map(([n, I]) => (
           <button className={page === n ? 'active' : ''} onClick={() => setPage(n)} key={n}><I size={18} /><span>{n}</span></button>
         ))}</nav>
