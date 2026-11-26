@@ -8,6 +8,7 @@ import { Setup } from './pages/Setup';
 import { IntegrationStatus } from './pages/IntegrationStatus';
 import { AddRemote } from './pages/AddRemote';
 import { AddQubo } from './pages/AddQubo';
+import { AirQuality } from './pages/AirQuality';
 import { PhaseBanner } from './components/PhaseBanner';
 import { Controls } from './components/Controls';
 import { QuboPanel } from './components/QuboPanel';
@@ -16,7 +17,7 @@ import { QUBO_PROVENANCE } from './providers/qubo/status';
 import { useQuboProvider } from './providers/qubo/useQuboProvider';
 
 const nav = [
-  ['Dashboard', Home], ['Automations', Workflow], ['Devices', AirVent], ['History', Activity],
+  ['Dashboard', Home], ['Air Quality', Activity], ['Automations', Workflow], ['Devices', AirVent], ['History', Activity],
   ['Integrations', Cloud], ['Integration status', ListChecks], ['Add Remote', Radio], ['Settings', Settings],
 ] as const;
 
@@ -54,6 +55,7 @@ function App() {
         </header>
         <div className="pageFade" key={page}>
           {page === 'Dashboard' && <Dashboard tagged={tagged} google={google.snapshot} qubo={qubo.snapshot} googleProvider={google.provider} add={add} />}
+          {page === 'Air Quality' && <AirQuality device={tagged.find((t) => t.device.supported)?.device} />}
           {page === 'Devices' && <Devices tagged={tagged} add={add} />}
           {page === 'Integrations' && <Integrations google={google.snapshot} qubo={qubo.snapshot} setPage={setPage} />}
           {page === 'Setup' && <Setup snapshot={google.snapshot} provider={google.provider} />}
