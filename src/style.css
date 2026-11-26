@@ -147,3 +147,29 @@ button:active:not(:disabled){transform:scale(.96)}
 .welcomeNote{margin:19px auto 0;color:#587285;font-size:9px;line-height:1.65}
 .brandLogo{width:34px;height:34px;border-radius:10px;display:block}
 @media(max-width:600px){.welcomePage{min-height:calc(100vh - 105px);border-radius:18px}.welcomeContent{padding:24px 16px}.welcomeContent h2{font-size:27px}.welcomeLogo{width:64px;height:64px}.welcomeAdd{width:100%}.welcomeDivider{width:100%}}
+
+/* --- Mobile dashboard refinement: match the compact MyAir reference layout --- */
+@media(max-width:600px){
+  body{background:radial-gradient(circle at 50% 0%,#0d2a46 0,#071426 48%,#040d18 100%)}
+  main{padding:18px 14px 28px;max-width:none}
+  header{margin:0 -2px 18px;align-items:center;gap:12px}
+  header h1{font-size:28px;letter-spacing:-1.1px}
+  .eyebrow{font-size:8px;letter-spacing:1.8px;margin-bottom:4px}
+  .actions{margin:0 0 0 auto}
+  .actions .ghost{display:none}
+  .actions .primary{padding:11px 14px;border-radius:12px;font-size:12px;white-space:nowrap;box-shadow:0 8px 24px rgba(48,190,232,.16)}
+  .welcomePage{min-height:calc(100svh - 120px);margin:0 -2px;border-radius:22px;align-items:start}
+  .welcomeContent{width:100%;padding:48px 8px 26px}
+  .welcomeLogo{width:76px;height:76px;border-radius:22px;margin-bottom:20px;box-shadow:0 16px 42px rgba(37,174,226,.22)}
+  .welcomeKicker{font-size:8px;letter-spacing:2.2px;margin-bottom:12px}
+  .welcomeContent h2{font-size:30px;line-height:1.12}
+  .welcomeLead{font-size:13px;line-height:1.7;margin:12px auto 28px;max-width:340px}
+  .welcomeAdd{width:100%;max-width:390px;padding:15px 18px;border-radius:14px;font-size:15px}
+  .welcomeDivider{max-width:390px;margin:28px auto 14px}
+  .welcomeConnections{max-width:390px;gap:10px}
+  .connectionCard{padding:14px 14px;border-radius:15px;min-height:70px;background:rgba(8,25,42,.78);backdrop-filter:blur(12px)}
+  .connectionIcon{width:40px;height:40px;border-radius:12px}
+  .connectionCard strong{font-size:13px}
+  .connectionCard span{font-size:10px}
+  .welcomeNote{max-width:340px;font-size:9px;margin-top:20px}
+}
