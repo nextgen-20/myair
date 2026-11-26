@@ -9,8 +9,8 @@ import org.json.JSONObject
  * Real Android Consumer IR transmit support (android.hardware.ConsumerIrManager).
  *
  * IMPORTANT SCOPE NOTE: Android has a transmit-only IR API. There is no public Android API to
- * *receive*/learn an IR signal from an existing remote, so this cannot be a "point your old remote
- * at the phone and learn it" feature. It also ships with NO built-in brand code database — Qubo and
+ * receive (i.e. learn) an IR signal from an existing remote, so this cannot be a "point your old
+ * remote at the phone and learn it" feature. It also ships with NO built-in brand code database — Qubo and
  * most consumer-electronics IR code sets are proprietary and were not available to source honestly,
  * so inventing hex codes would mean fake commands that silently do nothing on a real TV/AC. Instead:
  *   - MyAir detects real IR hardware and refuses to show remote controls if it's absent.
