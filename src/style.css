@@ -120,3 +120,30 @@ button:active:not(:disabled){transform:scale(.96)}
 
 /* --- Qubo setup prerequisite note --- */
 .quboSetupNote{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;margin:0 0 20px;border:1px solid #24506a;border-radius:13px;background:linear-gradient(145deg,#0d2940,#0a1d30);color:#d9edf7}.quboSetupIcon{width:36px;height:36px;flex:0 0 auto;border-radius:10px;background:#123d56;color:var(--cyan);display:grid;place-items:center}.quboSetupNote strong{display:block;font-size:13px}.quboSetupNote p{margin:5px 0 0;color:#8eabbc;font-size:11px;line-height:1.55}
+
+
+/* --- MyAir first-launch welcome screen --- */
+.welcomePage{position:relative;min-height:calc(100vh - 150px);display:grid;place-items:center;overflow:hidden;border-radius:24px}
+.welcomeGlow{position:absolute;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(71,199,245,.13) 0%,rgba(71,199,245,.04) 42%,transparent 70%);filter:blur(8px);top:4%;left:50%;transform:translateX(-50%);pointer-events:none}
+.welcomeContent{position:relative;z-index:1;width:min(500px,100%);padding:34px 28px;text-align:center}
+.welcomeLogo{width:72px;height:72px;border-radius:20px;box-shadow:0 14px 40px rgba(37,174,226,.18);margin-bottom:18px}
+.welcomeKicker{display:block;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#5f8da7;margin-bottom:9px}
+.welcomeContent h2{font-size:31px;letter-spacing:-1.1px;margin:0;color:#f2f9fd}
+.welcomeLead{max-width:390px;margin:10px auto 24px;color:#849dac;font-size:13px;line-height:1.7}
+.welcomeAdd{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:min(330px,100%);padding:14px 20px;border-radius:13px;background:linear-gradient(135deg,#69ddff,#35b9e9);color:#04131d;font-weight:800;box-shadow:0 12px 30px rgba(48,190,232,.2)}
+.welcomeAdd:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.welcomeDivider{display:flex;align-items:center;gap:12px;width:min(330px,100%);margin:25px auto 13px;color:#536f82;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.6px}
+.welcomeDivider:before,.welcomeDivider:after{content:'';height:1px;background:#193346;flex:1}
+.welcomeConnections{display:grid;gap:8px;width:min(400px,100%);margin:auto}
+.connectionCard{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;text-align:left;border:1px solid #17354a;border-radius:13px;background:rgba(9,27,43,.72);color:#dcebf3}
+.connectionCard:hover:not(:disabled){border-color:#2d637f;background:#0d263b}
+.connectionCard:disabled{cursor:default;opacity:.96}
+.connectionCard>div:nth-child(2){flex:1;min-width:0}
+.connectionCard strong{display:block;font-size:12px;margin-bottom:3px}
+.connectionCard span{display:block;color:#718b9d;font-size:10px;line-height:1.4}
+.connectionIcon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:0 0 auto}
+.connectionIcon.qubo{background:#0d3447;color:#55d5f5}.connectionIcon.home{background:#172d45;color:#8fb9d6}
+.connectionCard>svg{color:#58778b;flex:0 0 auto}
+.welcomeNote{margin:19px auto 0;color:#587285;font-size:9px;line-height:1.65}
+.brandLogo{width:34px;height:34px;border-radius:10px;display:block}
+@media(max-width:600px){.welcomePage{min-height:calc(100vh - 105px);border-radius:18px}.welcomeContent{padding:24px 16px}.welcomeContent h2{font-size:27px}.welcomeLogo{width:64px;height:64px}.welcomeAdd{width:100%}.welcomeDivider{width:100%}}
