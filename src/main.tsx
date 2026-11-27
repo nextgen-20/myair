@@ -41,7 +41,7 @@ function App() {
   return (
     <div className="app">
       <aside>
-        <div className="brand"><img className="brandLogo" src="/myair-logo.svg" alt="MyAir" /><span>MyAir</span></div>
+        <div className="brand"><img className="brandLogo" src="./myair-logo.svg" alt="MyAir" /><span>MyAir</span></div>
         <nav>{nav.map(([n, I]) => (
           <button className={page === n ? 'active' : ''} onClick={() => setPage(n)} key={n}><I size={18} /><span>{n}</span></button>
         ))}</nav>
@@ -84,7 +84,7 @@ function Dashboard({ tagged, google, qubo, googleProvider, add, setPage }: {
         <div className="welcomeGlow" />
         <div className="welcomeContent">
           <div className="welcomeTop">
-            <div className="welcomeBrand"><div className="welcomeLogoWrap"><img className="welcomeLogo" src="/myair-logo.svg" alt="MyAir" /></div><div><strong>MyAir</strong><span>SMART AIR</span></div></div>
+            <div className="welcomeBrand"><div className="welcomeLogoWrap"><img className="welcomeLogo" src="./myair-logo.svg" alt="MyAir" /></div><div><strong>MyAir</strong><span>SMART AIR</span></div></div>
             <span className="welcomeStatus"><i /> READY</span>
           </div>
           <div className="welcomeHero">
@@ -121,7 +121,7 @@ function Dashboard({ tagged, google, qubo, googleProvider, add, setPage }: {
     <section>
       <PhaseBanner snapshot={google} provider={googleProvider} />
       {isQubo ? (
-        <QuboPanel device={d} provider={t.provider} />
+        <QuboPanel device={d} provider={t.provider} onBack={() => setPage('Devices')} />
       ) : (
         <div className="heroGrid">
           <div className="card air">
