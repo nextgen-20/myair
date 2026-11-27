@@ -61,7 +61,7 @@ function ModeIcon({ id }: { id: string }) {
   return <Wind size={22} />;
 }
 
-export function QuboPanel({ device: d, provider }: { device: PurifierDevice; provider: PurifierProvider }) {
+export function QuboPanel({ device: d, provider, onBack }: { device: PurifierDevice; provider: PurifierProvider; onBack?: () => void }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [fb, setFb] = useState<Feedback>(null);
   const [pressed, setPressed] = useState<string | null>(null);
@@ -100,7 +100,7 @@ export function QuboPanel({ device: d, provider }: { device: PurifierDevice; pro
 
       <div className="qpanelTop">
         <div className="qTitleRow">
-          <button className="qBack" aria-label="Back"><span>‹</span></button>
+          <button className="qBack" aria-label="Back" onClick={() => onBack?.()}><span>‹</span></button>
           <div>
             <span className="qEyebrow">QUBO · {d.model ?? 'AIR PURIFIER'}</span>
             <h2 className="qName">My Air Purifier</h2>
