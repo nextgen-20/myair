@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AirVent, Activity, Workflow, Cloud, Home, Plus, Settings, ShieldCheck, Wind, Gauge, ChevronRight, ListChecks, Radio } from 'lucide-react';
+import { AirVent, Activity, Workflow, Cloud, Home, Plus, Settings, ShieldCheck, Wind, Gauge, ChevronRight, ListChecks, Radio, Bell, Clock3, Building2, Lightbulb, SlidersHorizontal, Filter, Zap } from 'lucide-react';
 import './style.css';
 import { useProvider } from './providers/useProvider';
 import type { ProviderSnapshot, PurifierProvider, PurifierDevice } from './providers/types';
@@ -17,7 +17,7 @@ import { QUBO_PROVENANCE } from './providers/qubo/status';
 import { useQuboProvider } from './providers/qubo/useQuboProvider';
 
 const nav = [
-  ['Dashboard', Home], ['Air Quality', Activity], ['Automations', Workflow], ['Devices', AirVent], ['History', Activity],
+  ['Dashboard', Home], ['Air Quality', Activity], ['Automations', Workflow], ['Alerts', Bell], ['Devices', AirVent], ['Rooms', Building2], ['History', Activity],
   ['Integrations', Cloud], ['Integration status', ListChecks], ['Add Remote', Radio], ['Settings', Settings],
 ] as const;
 
@@ -65,6 +65,8 @@ function App() {
           {page === 'Integration status' && <IntegrationStatus snapshot={google.snapshot} provider={google.provider} secondSnapshot={qubo.snapshot} secondProvider={qubo.provider} />}
           {page === 'Add Remote' && <AddRemote />}
           {page === 'Automations' && <Automations tagged={tagged} />}
+          {page === 'Alerts' && <Alerts tagged={tagged} />}
+          {page === 'Rooms' && <Rooms tagged={tagged} />}
           {page === 'History' && <History />}
           {page === 'Settings' && <SettingsPage />}
         </div>
@@ -218,17 +220,25 @@ function Integrations({ google, qubo, setPage }: { google: ProviderSnapshot; qub
   );
 }
 
+function FeatureHeader({ eyebrow, title, description, icon: Icon }: { eyebrow: string; title: string; description: string; icon: React.ComponentType<{ size?: number }> }) {
+  return <div className="featureHeader"><div className="featureIcon"><Icon size={21} /></div><div><span className="label">{eyebrow}</span><h2>{title}</h2><p>{description}</p></div></div>;
+}
+function Alerts({ tagged }: { tagged: TaggedDevice[] }) {
+  const connected = tagged.some((t) => t.device.supported);
+  const rules = [['Poor air quality','Notify when PM2.5 enters the Poor range',Bell],['Purifier offline','Notify when a connected purifier loses connection',Zap],['Filter attention','Notify when reported filter life needs attention',Filter]] as const;
+  return <section><FeatureHeader eyebrow="SMART ALERTS" title="Stay ahead of your air" description="Set notifications around real readings and real device state. Nothing is generated when a purifier is disconnected." icon={Bell} /><div className="featureGrid"><div className="card featureHeroCard"><span className="label">ALERT CENTER</span><h3>{connected?'Ready for real device events':'Connect a purifier first'}</h3><p>{connected?'Your alerts can react to the connected purifier’s reported air quality and connectivity.':'Once a Qubo purifier is connected, MyAir can use its reported state for alerts.'}</p><div className={'featureStatus '+(connected?'ready':'waiting')}><i /> {connected?'DEVICE CONNECTED':'WAITING FOR DEVICE'}</div></div><div className="card featureList">{rules.map(([name,copy,Icon])=><div className="featureRow" key={name}><div className="featureRowIcon"><Icon size={18}/></div><div><strong>{name}</strong><span>{copy}</span></div><span className="switch"><i /></span></div>)}</div></div><div className="card setupCard"><SlidersHorizontal size={18}/><div><strong>Alert settings</strong><span>Thresholds, quiet hours and notification preferences will use values reported by the connected device.</span></div><ChevronRight size={17}/></div></section>;
+}
+function Rooms({ tagged }: { tagged: TaggedDevice[] }) {
+  const supported=tagged.filter(t=>t.device.supported);
+  return <section><FeatureHeader eyebrow="HOME OVERVIEW" title="Rooms" description="See every connected purifier by room and keep a quick view of the air in your home." icon={Building2} />{supported.length===0?<div className="empty compact"><Building2 size={25}/><h3>No rooms yet</h3><p>Add a real Qubo purifier and its reported room will appear here. MyAir will not invent room names or readings.</p></div>:<div className="roomGrid">{supported.map(({device:d,sourceLabel})=><div className="card roomCard" key={d.id}><div className="roomTop"><div className="roomIcon"><AirVent size={20}/></div><span className="status"><i /> {d.connectivity}</span></div><span className="label">{d.room??'ROOM NOT REPORTED'}</span><h3>{d.name}</h3><div className="roomMetric">{d.state.pm25!=null?<><strong>{d.state.pm25}</strong><span>µg/m³ PM2.5</span></>:<><strong>—</strong><span>PM2.5 not reported</span></>}</div><div className="roomMeta">{sourceLabel}{d.model? ` · ${d.model}`:''}</div></div>)}</div>}</section>;
+}
 function Automations({ tagged }: { tagged: TaggedDevice[] }) {
-  const has = tagged.some((t) => t.device.supported);
-  return (
-    <section>
-      <div className="sectionHead"><div><span className="label">AUTOMATION ENGINE</span><h2>Rules</h2></div><button className="primary" disabled={!has}><Plus size={17} /> New rule</button></div>
-      <div className="empty compact"><Workflow size={25} /><h3>{has ? 'No rules yet' : 'Connect a device first'}</h3><p>{has ? 'Rule creation is not implemented yet.' : 'Automations cannot run until MyAir has a real device event source.'}</p></div>
-    </section>
-  );
+  const has=tagged.some(t=>t.device.supported);
+  const routines=[['Sleep routine','Set a quieter overnight mode when supported by the device',Clock3],['High pollution','React to a real PM2.5 threshold from the purifier',Wind],['Morning air','Create a morning routine around your connected purifier',Zap]] as const;
+  return <section><FeatureHeader eyebrow="AUTOMATION ENGINE" title="Routines" description="Create simple air routines around real purifier capabilities. Execution stays disabled until each capability is wired." icon={Workflow}/><div className="routineGrid">{routines.map(([name,copy,Icon])=><div className="card routineCard" key={name}><div className="routineIcon"><Icon size={20}/></div><span className="label">ROUTINE</span><h3>{name}</h3><p>{copy}</p><button className="ghost" disabled={!has}><Plus size={15}/> Configure</button></div>)}</div><div className="card automationNote"><Lightbulb size={19}/><div><strong>Ready for real automation</strong><span>MyAir will only execute a routine when the provider exposes the required control or reading.</span></div></div></section>;
 }
 function History() {
-  return <section><div className="empty compact"><Activity size={25} /><h3>No sensor history</h3><p>History will appear after a real connected device sends readings. MyAir does not generate placeholder measurements.</p></div></section>;
+  return <section><FeatureHeader eyebrow="AIR HISTORY" title="Your air over time" description="A timeline for real PM2.5 readings, purifier activity and indoor/outdoor comparison." icon={Activity}/><div className="historyTabs"><button className="active">Today</button><button>7 days</button><button>30 days</button></div><div className="card chartCard"><div className="chartTop"><div><span className="label">PM2.5 TREND</span><h3>Waiting for sensor history</h3></div><span className="pill muted">NO DATA</span></div><div className="chartEmpty"><Activity size={22}/><span>Real readings will be plotted here after MyAir receives them.</span></div></div><div className="metricGrid"><div className="card miniMetric"><span>BEST PERIOD</span><strong>—</strong><small>No recorded readings</small></div><div className="card miniMetric"><span>WORST PERIOD</span><strong>—</strong><small>No recorded readings</small></div><div className="card miniMetric"><span>PURIFIER IMPACT</span><strong>—</strong><small>Requires enough real history</small></div></div></section>;
 }
 function SettingsPage() {
   return (
