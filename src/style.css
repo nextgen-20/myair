@@ -211,3 +211,38 @@ button:active:not(:disabled){transform:scale(.96)}
  .welcomeContent{padding-top:28px}
  .welcomeHero{padding-top:10px}
 }
+
+
+/* --- Final premium responsive polish --- */
+.welcomePage{min-height:calc(100svh - 105px);border:1px solid rgba(53,103,128,.32);border-radius:24px;overflow:hidden;position:relative;background:radial-gradient(70% 60% at 50% 0%,rgba(26,145,205,.16),transparent 68%),linear-gradient(160deg,#071b2b 0%,#061421 55%,#040d16 100%);box-shadow:0 28px 80px rgba(0,0,0,.22)}
+.welcomeContent{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:30px 34px 34px}
+.welcomeTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px}
+.welcomeBrand{display:flex;align-items:center;gap:11px}
+.welcomeBrand strong{display:block;font-size:16px;letter-spacing:-.3px}.welcomeBrand span{display:block;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:1.8px;color:#62849a;margin-top:2px}
+.welcomeStatus{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:#6fe0a1;border:1px solid rgba(79,227,154,.2);background:rgba(79,227,154,.07);border-radius:999px;padding:7px 10px;display:flex;gap:6px;align-items:center}
+.welcomeStatus i{width:5px;height:5px;border-radius:50%;background:#4fe39a;box-shadow:0 0 10px #4fe39a}
+.welcomeHero{max-width:690px}.welcomeKicker{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#56b9df}.welcomeContent h2{font-size:clamp(38px,6vw,62px);line-height:.98;letter-spacing:-2.8px;margin:10px 0 16px;color:#f2f9ff}.welcomeContent h2 em{font-style:normal;color:#68d8ff}.welcomeLead{font-size:14px;line-height:1.7;color:#8faabd;max-width:590px;margin:0 0 23px}.welcomeAdd{display:inline-flex;align-items:center;gap:9px;padding:13px 18px;border-radius:12px;background:linear-gradient(135deg,#6ad9ff,#38b8e8);color:#04131e;font-weight:800;box-shadow:0 12px 32px rgba(45,185,232,.18)}
+.welcomeAdd:hover{transform:translateY(-1px);filter:brightness(1.04)}
+.welcomePreview{display:flex;align-items:center;gap:18px;margin:30px 0 16px;padding:17px 19px;border:1px solid rgba(70,126,151,.3);border-radius:18px;background:rgba(8,26,40,.68);backdrop-filter:blur(12px)}
+.previewRing{flex:0 0 auto;width:78px;height:78px}.previewRing:after{background:#081827!important}.previewRing strong{font-size:28px}.previewCopy span{font-size:8px;letter-spacing:1.5px}.previewCopy strong{font-size:13px}.previewCopy p{font-size:10px;line-height:1.5}
+.welcomeConnections{grid-template-columns:1fr 1fr;gap:11px}.connectionCard{min-height:94px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:15px 16px}.connectionCard>div:nth-child(2){min-width:0}.connectionCard span:not(.connectionEyebrow){line-height:1.45}
+@media(max-width:700px){.welcomePage{min-height:calc(100svh - 88px);border-radius:20px}.welcomeContent{padding:24px 18px 25px}.welcomeTop{margin-bottom:36px}.welcomeContent h2{font-size:39px;letter-spacing:-2px}.welcomeLead{font-size:12px}.welcomePreview{margin-top:24px}.welcomeConnections{grid-template-columns:1fr}.connectionCard{min-height:78px}}
+@media(min-width:1000px){.welcomeHero{padding-left:4px}.welcomePreview{max-width:720px}.welcomeConnections{max-width:720px}.welcomeNote{text-align:left;margin-left:0}}
+:root[data-theme="light"] .welcomePage{box-shadow:0 24px 70px rgba(40,83,103,.09)}
+:root[data-theme="light"] .welcomeKicker{color:#078dcc}
+:root[data-theme="light"] .welcomeStatus{color:#397354}
+:root[data-theme="light"] .welcomePreview{background:rgba(255,255,255,.75)}
+:root[data-theme="light"] .previewRing:after{background:#f7fbfc!important}
+
+/* Keep the connected Qubo screen premium while allowing the app light theme to remain coherent. */
+:root[data-theme="light"] .qpanel{background:radial-gradient(110% 90% at 50% 42%,#f7fbfd 0%,#eef5f8 62%,#e7f0f4 100%);border-color:#d4e2e9;box-shadow:0 24px 60px rgba(45,84,103,.12)}
+:root[data-theme="light"] .qName,:root[data-theme="light"] .qRingCenter strong{color:#102630}
+:root[data-theme="light"] .qDeviceName,:root[data-theme="light"] .qConn{color:#66808d}
+:root[data-theme="light"] .qModeIcon{background:#edf4f7;border-color:#d4e1e7;color:#426171}
+:root[data-theme="light"] .qModeBtn{color:#66808d}
+:root[data-theme="light"] .qModeBtn.active{color:#173543}
+:root[data-theme="light"] .qModeBtn.active .qModeIcon{color:#fff}
+:root[data-theme="light"] .qSeg{background:#e8f0f4;border-color:#d3e0e6}
+:root[data-theme="light"] .qSegBtn{color:#66808d}
+:root[data-theme="light"] .qBarBtn{background:#edf4f7;border-color:#d6e2e8;color:#5d7887}
+:root[data-theme="light"] .qBottomBar{border-color:#d7e3e8}
