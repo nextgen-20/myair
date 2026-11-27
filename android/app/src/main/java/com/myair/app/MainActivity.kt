@@ -66,8 +66,20 @@ class MainActivity : ComponentActivity() {
             }
         }
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
-                assets.shouldInterceptRequest(request.url)
+            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                val response = assets.shouldInterceptRequest(request.url) ?: return null
+                // Android's MimeTypeMap (used internally by WebViewAssetLoader) has no entry for
+                // ".js", so JS module files come back with a missing/incorrect Content-Type. Chromium's
+                // WebView enforces strict MIME-type checking for <script type="module">, so the bundle
+                // silently fails to execute (the page's CSS still loads fine, since <link rel="stylesheet">
+                // is MIME-lenient — this is exactly why only the background gradient was visible and the
+                // React app never mounted). Force the correct type for script files here.
+                val path = request.url.path.orEmpty()
+                if (path.endsWith(".js") || path.endsWith(".mjs")) {
+                    response.mimeType = "text/javascript"
+                }
+                return response
+            }
 
             // The JS bridge is only reachable from our own bundled origin: block all other navigation.
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =

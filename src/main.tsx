@@ -56,7 +56,7 @@ function App() {
           </div>
         </header>
         <div className="pageFade" key={page}>
-          {page === 'Dashboard' && <Dashboard tagged={tagged} google={google.snapshot} qubo={qubo.snapshot} googleProvider={google.provider} add={add} />}
+          {page === 'Dashboard' && <Dashboard tagged={tagged} google={google.snapshot} qubo={qubo.snapshot} googleProvider={google.provider} add={add} setPage={setPage} />}
           {page === 'Air Quality' && <AirQuality device={tagged.find((t) => t.device.supported)?.device} />}
           {page === 'Devices' && <Devices tagged={tagged} add={add} />}
           {page === 'Integrations' && <Integrations google={google.snapshot} qubo={qubo.snapshot} setPage={setPage} />}
@@ -73,8 +73,8 @@ function App() {
   );
 }
 
-function Dashboard({ tagged, google, qubo, googleProvider, add }: {
-  tagged: TaggedDevice[]; google: ProviderSnapshot; qubo: ProviderSnapshot; googleProvider: PurifierProvider; add: () => void;
+function Dashboard({ tagged, google, qubo, googleProvider, add, setPage }: {
+  tagged: TaggedDevice[]; google: ProviderSnapshot; qubo: ProviderSnapshot; googleProvider: PurifierProvider; add: () => void; setPage: (p: string) => void;
 }) {
   const supported = tagged.filter((t) => t.device.supported);
   const t = supported[0];
