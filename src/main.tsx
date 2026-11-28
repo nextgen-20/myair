@@ -148,7 +148,10 @@ function Dashboard({ tagged, google, qubo, googleProvider, add, setPage }: {
   const isQubo = t.sourceLabel === 'Qubo';
   return (
     <section>
-      <PhaseBanner snapshot={google} provider={googleProvider} />
+      {/* Only show a provider's own banner when it owns the device on screen — showing
+          Google Home's permanent "unavailable in this build" error above a connected
+          Qubo purifier was confusing and pushed the whole panel down for no reason. */}
+      {!isQubo && <PhaseBanner snapshot={google} provider={googleProvider} />}
       {isQubo ? (
         <QuboPanel device={d} provider={t.provider} onBack={() => setPage('Devices')} />
       ) : (

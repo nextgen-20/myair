@@ -78,6 +78,11 @@ export function QuboPanel({ device: d, provider, onBack }: { device: PurifierDev
   const modeIdx = Math.max(0, modes.findIndex((m) => m.id === d.state.fanMode));
   const levels = d.state.fanSpeedLevelsAvailable.length ? d.state.fanSpeedLevelsAvailable : [1, 2, 3];
   const levelIdx = Math.max(0, levels.findIndex((l) => l === d.state.fanSpeedLevel));
+  // Only the manual mode actually uses a fixed fan-speed level — showing this row all
+  // the time (even under Auto/Sleep/QSensAI, where the device picks its own speed)
+  // was the "complicated"-looking extra control row. Keep it, but only when relevant.
+  const currentModeId = modes[modeIdx]?.id?.toLowerCase() ?? '';
+  const showSpeedRow = d.controls.fanSpeedLevel && (currentModeId.includes('manual') || !modes.length);
   const powerOn = d.state.power === true;
 
   const run = async (key: string, fn: () => Promise<CommandResult>, what: string) => {
@@ -150,7 +155,7 @@ export function QuboPanel({ device: d, provider, onBack }: { device: PurifierDev
         ))}
       </div>
 
-      {d.controls.fanSpeedLevel && (
+      {showSpeedRow && (
         <div className="qSpeedRow">
           <span className="qSpeedLabel"><Wind size={14} /> Fan speed</span>
           <div className="qSeg qSegSmall" style={{ ['--n' as string]: levels.length }}>
