@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AirVent, Activity, Workflow, Cloud, Home, Plus, Settings, ShieldCheck, Wind, Gauge, ChevronRight, ListChecks, Radio, Bell, Clock3, Building2, Lightbulb, SlidersHorizontal, Filter, Zap } from 'lucide-react';
+import { AirVent, Activity, Workflow, Cloud, Home, Plus, Settings, ShieldCheck, Wind, Gauge, ChevronRight, ChevronLeft, ListChecks, Radio, Bell, Clock3, Building2, Lightbulb, SlidersHorizontal, Filter, Zap } from 'lucide-react';
 import './style.css';
 import { useProvider } from './providers/useProvider';
 import type { ProviderSnapshot, PurifierProvider, PurifierDevice } from './providers/types';
@@ -12,13 +12,26 @@ import { AirQuality } from './pages/AirQuality';
 import { PhaseBanner } from './components/PhaseBanner';
 import { Controls } from './components/Controls';
 import { QuboPanel } from './components/QuboPanel';
+import { AirIllustration, NoDeviceIcon } from './components/AirIllustration';
 import { connectivityLabel } from './providers/format';
 import { QUBO_PROVENANCE } from './providers/qubo/status';
 import { useQuboProvider } from './providers/qubo/useQuboProvider';
 
-const nav = [
-  ['Dashboard', Home], ['Air Quality', Activity], ['Automations', Workflow], ['Alerts', Bell], ['Devices', AirVent], ['Rooms', Building2], ['History', Activity],
-  ['Integrations', Cloud], ['Integration status', ListChecks], ['Add Remote', Radio], ['Settings', Settings],
+/** The 3 primary destinations shown in the bottom tab bar, matching the reference
+ * screenshot exactly. Every other page is still fully implemented and reachable
+ * from Settings -> "More" (or an in-context link), it's just not in the tab bar. */
+const bottomTabs = [
+  ['Dashboard', 'Home', Home], ['Add Remote', 'Add Remote', Radio], ['History', 'History', Activity],
+] as const;
+
+const moreLinks = [
+  ['Air Quality', Activity, 'Indoor vs outdoor AQI and PM2.5 history'],
+  ['Devices', AirVent, 'All discovered devices across every provider'],
+  ['Rooms', Building2, 'Connected purifiers grouped by room'],
+  ['Alerts', Bell, 'Notifications based on real device events'],
+  ['Automations', Workflow, 'Routines that react to real device events'],
+  ['Integrations', Cloud, 'Qubo and Google Home connection status'],
+  ['Integration status', ListChecks, 'Detailed provider/connection diagnostics'],
 ] as const;
 
 /** One device tagged with the specific provider instance that owns it, so Controls can
@@ -29,7 +42,7 @@ function App() {
   const google = useProvider();
   const qubo = useQuboProvider();
   const [page, setPage] = useState('Dashboard');
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('myair-theme') !== 'light');
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('myair-theme') === 'dark');
   useEffect(() => { document.documentElement.dataset.theme = darkMode ? 'dark' : 'light'; localStorage.setItem('myair-theme', darkMode ? 'dark' : 'light'); }, [darkMode]);
   const add = () => setPage('Add Qubo');
 
@@ -38,23 +51,24 @@ function App() {
     ...qubo.snapshot.devices.map((device) => ({ device, provider: qubo.provider, sourceLabel: 'Qubo' })),
   ];
 
+  const isHome = page === 'Dashboard';
   return (
-    <div className="app">
-      <aside>
-        <div className="brand"><img className="brandLogo" src="./myair-logo.svg" alt="MyAir" /><span>MyAir</span></div>
-        <nav>{nav.map(([n, I]) => (
-          <button className={page === n ? 'active' : ''} onClick={() => setPage(n)} key={n}><I size={18} /><span>{n}</span></button>
-        ))}</nav>
-        <div className="sideFoot"><ShieldCheck size={16} /><span>Local-first control</span></div>
-      </aside>
-      <main>
-        <header>
-          <div><div className="eyebrow">AIR INTELLIGENCE</div><h1>{page}</h1></div>
-          <div className="actions">
-            <button className="themeToggle" aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} onClick={() => setDarkMode(v => !v)}>{darkMode ? "☀" : "☾"} <span>{darkMode ? "Light" : "Dark"}</span></button><button className="ghost" onClick={() => setPage('Integration status')}>Connection status</button>
-            <button className="primary" onClick={add}><Plus size={17} /> Add device</button>
-          </div>
-        </header>
+    <div className="phoneApp">
+      <header className="topBar">
+        {isHome ? (
+          <>
+            <div className="brand"><img className="brandLogo" src="./myair-logo.svg" alt="MyAir" /><span><b>My</b>Air</span></div>
+            <button className="gearBtn" aria-label="Settings" onClick={() => setPage('Settings')}><Settings size={19} /></button>
+          </>
+        ) : (
+          <>
+            <button className="backBtn" aria-label="Back to Home" onClick={() => setPage('Dashboard')}><ChevronLeft size={20} /></button>
+            <span className="topBarTitle">{page}</span>
+            <button className="themeToggle" aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} onClick={() => setDarkMode(v => !v)}>{darkMode ? "☀" : "☾"}</button>
+          </>
+        )}
+      </header>
+      <main className="phoneMain">
         <div className="pageFade" key={page}>
           {page === 'Dashboard' && <Dashboard tagged={tagged} google={google.snapshot} qubo={qubo.snapshot} googleProvider={google.provider} add={add} setPage={setPage} />}
           {page === 'Air Quality' && <AirQuality device={tagged.find((t) => t.device.supported)?.device} />}
@@ -68,9 +82,16 @@ function App() {
           {page === 'Alerts' && <Alerts tagged={tagged} />}
           {page === 'Rooms' && <Rooms tagged={tagged} />}
           {page === 'History' && <History />}
-          {page === 'Settings' && <SettingsPage />}
+          {page === 'Settings' && <SettingsPage setPage={setPage} />}
         </div>
       </main>
+      <nav className="bottomTabs">
+        {bottomTabs.map(([key, label, I]) => (
+          <button key={key} className={page === key ? 'active' : ''} onClick={() => setPage(key)}>
+            <I size={21} /><span>{label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
@@ -81,37 +102,43 @@ function Dashboard({ tagged, google, qubo, googleProvider, add, setPage }: {
   const supported = tagged.filter((t) => t.device.supported);
   const t = supported[0];
   if (!t) {
+    const googleUnavailable = google.phase === 'error' || google.phase === 'unsupported-platform';
     return (
       <section className="welcomePage">
-        <div className="welcomeGlow" />
-        <div className="welcomeContent">
-          <div className="welcomeTop">
-            <div className="welcomeBrand"><div className="welcomeLogoWrap"><img className="welcomeLogo" src="./myair-logo.svg" alt="MyAir" /></div><div><strong>MyAir</strong><span>SMART AIR</span></div></div>
-            <span className="welcomeStatus"><i /> READY</span>
-          </div>
-          <div className="welcomeHero">
-            <span className="welcomeKicker">YOUR AIR. ONE PLACE.</span>
-            <h2>Cleaner air,<br /><em>made simple.</em></h2>
-            <p className="welcomeLead">Connect your purifier and see its real air quality, power and controls in one clean dashboard.</p>
-            <button className="welcomeAdd" onClick={add}><Plus size={19} /> Add Purifier</button>
-          </div>
-          <div className="welcomePreview">
-            <div className="previewRing"><div><strong>—</strong><span>PM2.5</span></div></div>
-            <div className="previewCopy"><span>LIVE AIR QUALITY</span><strong>Waiting for purifier</strong><p>No readings are shown until a real device is connected.</p></div>
-          </div>
-          <div className="welcomeConnections">
-            <button className="connectionCard" onClick={() => setPage('Add Qubo')}>
-              <div className="connectionIcon qubo"><Wind size={20} /></div>
-              <div><span className="connectionEyebrow">RECOMMENDED</span><strong>Connect Qubo</strong><span>Sign in to discover a purifier already configured in the Qubo app.</span></div>
+        <div className="welcomeHero">
+          <h2>Your air,<br /><em>under control.</em></h2>
+          <p className="welcomeTagline">Clean &bull; Healthy &bull; Fresh</p>
+          <AirIllustration />
+        </div>
+        <div className="noDeviceCard">
+          <div className="noDeviceIconWrap"><NoDeviceIcon /></div>
+          <h3>No purifier connected</h3>
+          <p>Add your Qubo purifier to get started</p>
+          <button className="welcomeAdd" onClick={add}><Plus size={19} /> Add Purifier</button>
+        </div>
+        <h4 className="connectHeading">Connect with</h4>
+        <div className="welcomeConnections">
+          <button className="connectionCard" onClick={() => setPage('Add Qubo')}>
+            <div className="connectionIcon qubo">Qubo</div>
+            <div><strong>Qubo</strong><span>Sign in and discover your purifier</span></div>
+            <ChevronRight size={17} />
+          </button>
+          {googleUnavailable ? (
+            <button className="connectionCard disabled" disabled title={google.message ?? 'Google Home is set aside in this build.'}>
+              <div className="connectionIcon home"><Home size={18} /></div>
+              <div><strong>Google Home</strong><span>Coming soon</span></div>
+            </button>
+          ) : (
+            <button className="connectionCard" onClick={() => setPage('Setup')}>
+              <div className="connectionIcon home"><Home size={18} /></div>
+              <div><strong>Google Home</strong><span>Connect your Google Home account</span></div>
               <ChevronRight size={17} />
             </button>
-            <button className="connectionCard" onClick={() => setPage('Integrations')}>
-              <div className="connectionIcon home"><Home size={20} /></div>
-              <div><span className="connectionEyebrow">OPTIONAL</span><strong>Google Home</strong><span>Use Google Home as another supported connection.</span></div>
-              <ChevronRight size={17} />
-            </button>
-          </div>
-          <p className="welcomeNote">First time with Qubo? Configure the purifier in the official Qubo app first, then sign in here.</p>
+          )}
+        </div>
+        <div className="infoBanner">
+          <span className="infoDot">i</span>
+          <div><strong>Already configured your purifier in Qubo?</strong><p>Sign in to the same Qubo account and MyAir will find it.</p></div>
         </div>
       </section>
     );
@@ -240,9 +267,19 @@ function Automations({ tagged }: { tagged: TaggedDevice[] }) {
 function History() {
   return <section><FeatureHeader eyebrow="AIR HISTORY" title="Your air over time" description="A timeline for real PM2.5 readings, purifier activity and indoor/outdoor comparison." icon={Activity}/><div className="historyTabs"><button className="active">Today</button><button>7 days</button><button>30 days</button></div><div className="card chartCard"><div className="chartTop"><div><span className="label">PM2.5 TREND</span><h3>Waiting for sensor history</h3></div><span className="pill muted">NO DATA</span></div><div className="chartEmpty"><Activity size={22}/><span>Real readings will be plotted here after MyAir receives them.</span></div></div><div className="metricGrid"><div className="card miniMetric"><span>BEST PERIOD</span><strong>—</strong><small>No recorded readings</small></div><div className="card miniMetric"><span>WORST PERIOD</span><strong>—</strong><small>No recorded readings</small></div><div className="card miniMetric"><span>PURIFIER IMPACT</span><strong>—</strong><small>Requires enough real history</small></div></div></section>;
 }
-function SettingsPage() {
+function SettingsPage({ setPage }: { setPage: (p: string) => void }) {
   return (
     <section>
+      <h4 className="connectHeading" style={{ marginTop: 6 }}>More</h4>
+      <div className="moreGrid">
+        {moreLinks.map(([label, I, desc]) => (
+          <button key={label} className="moreLink" onClick={() => setPage(label)}>
+            <div className="moreIcon"><I size={19} /></div>
+            <div><strong>{label}</strong><span>{desc}</span></div>
+            <ChevronRight size={16} />
+          </button>
+        ))}
+      </div>
       <div className="card settings"><h2>MyAir settings</h2>
         <div className="setting"><div><h3>Demo data</h3><p>Disabled permanently in this build. Device readings come only from connected providers.</p></div><span className="off">OFF</span></div>
         <div className="setting"><div><h3>Device cache</h3><p>MyAir does not cache device state. Everything shown is read live from connected providers.</p></div><ShieldCheck /></div>
